@@ -1,16 +1,33 @@
-import { updateLanguageServiceSourceFile } from "typescript";
-import { GameEntity } from "./gamestate";
+import { GameEntity, Position } from "./gamestate";
+import { Command } from "./command"
 
 const canvas: HTMLCanvasElement = document.getElementById("canvas") as HTMLCanvasElement
 const context: CanvasRenderingContext2D = canvas.getContext("2d")
 
+let commands: Command[]
+
+const tickTime: number = 1000/60
+
+window.onresize = resizeCanvas
+const startTime: number = Date.now()
+
 class GameState implements GameEntity {
-  phi: number = 0;
-  update(dt) {
+  position: Position;
+
+  constructor() {
+    this.position = {
+      x: 100,
+      y: 100,
+      r: 0
+    }
+
+    this.phi = 0
+  }
+  update(dt: number, commands: Command[]) {
     this.phi = this.phi + 0.005 * dt
   }
 
-  draw(ctx) {
+  draw(ctx: CanvasRenderingContext2D) {
     ctx.fillStyle = "#f0f"
     const radius = 50
     const xPos = 100
@@ -19,6 +36,8 @@ class GameState implements GameEntity {
     const yOffset = Math.sin(this.phi) * radius
     ctx.fillRect(xPos + xOffset, yPos + yOffset, 100, 100)
   }
+
+  phi: number;
 }
 
 let currentState: GameState = new GameState()
@@ -30,40 +49,28 @@ function clearCanvas() {
   context.fillStyle = previousFillStyle
 }
 
-function draw() {
-  clearCanvas()
-  const phi = time * 0.005
-  const radius = 50
-  const xPos = 100
-  const yPos = 100
-  const xOffset = Math.cos(phi) * radius
-  const yOffset = Math.sin(phi) * radius
-  context.fillRect(xPos + xOffset, yPos + yOffset, 100, 100)
-}
-
 function resizeCanvas() {
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
   currentState.draw(context)
 }
 
-resizeCanvas()
-
-window.onresize = resizeCanvas
-
-const startTime = Date.now()
-let lastFrameTime = 0
-let time = 0
-let deltaT = 0
-
-function drawLoop() {
-  clearCanvas()
-  lastFrameTime = time
-  time = Date.now() - startTime
-  deltaT = time - lastFrameTime
-  currentState.update(deltaT)
-  currentState.draw(context)
-  window.requestAnimationFrame(drawLoop)
+function drawLoop(lastFrameTime: number) {
+  return () => {
+    const currentTime = Date.now() - startTime
+    let acc = currentTime - lastFrameTime
+    if (acc >= tickTime) {
+      console.log("Tick!")
+      currentState.update(tickTime, commands)
+      acc -= tickTime
+      commands = []
+      clearCanvas()
+      currentState.draw(context)
+    }
+    window.requestAnimationFrame(drawLoop(currentTime))
+  }
 }
 
-drawLoop()
+drawLoop(0)()
+resizeCanvas()
+
