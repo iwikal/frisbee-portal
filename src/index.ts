@@ -1,4 +1,3 @@
-import { updateLanguageServiceSourceFile } from "typescript";
 import { GameEntity } from "./gamestate";
 
 const canvas: HTMLCanvasElement = document.getElementById("canvas") as HTMLCanvasElement
@@ -6,11 +5,11 @@ const context: CanvasRenderingContext2D = canvas.getContext("2d")
 
 class GameState implements GameEntity {
   phi: number = 0;
-  update(dt) {
+  update(dt: number) {
     this.phi = this.phi + 0.005 * dt
   }
 
-  draw(ctx) {
+  draw(ctx: CanvasRenderingContext2D) {
     ctx.fillStyle = "#f0f"
     const radius = 50
     const xPos = 100
@@ -21,24 +20,13 @@ class GameState implements GameEntity {
   }
 }
 
-let currentState: GameState = new GameState()
+let currentState = new GameState()
 
 function clearCanvas() {
   const previousFillStyle = context.fillStyle
   context.fillStyle = "#fff"
   context.fillRect(0, 0, canvas.width, canvas.height)
   context.fillStyle = previousFillStyle
-}
-
-function draw() {
-  clearCanvas()
-  const phi = time * 0.005
-  const radius = 50
-  const xPos = 100
-  const yPos = 100
-  const xOffset = Math.cos(phi) * radius
-  const yOffset = Math.sin(phi) * radius
-  context.fillRect(xPos + xOffset, yPos + yOffset, 100, 100)
 }
 
 function resizeCanvas() {
