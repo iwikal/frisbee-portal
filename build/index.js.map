@@ -1,1 +1,0 @@
-{"version":3,"file":"index.js","sources":["../src/index.ts"],"sourcesContent":["const canvas = document.getElementById(\"canvas\")\nalert(\"hello\")\n"],"names":[],"mappings":";;;CAAe,QAAQ,CAAC,cAAc,CAAC,QAAQ,EAAC;CAChD,KAAK,CAAC,OAAO;;;;;;"}

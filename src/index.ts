@@ -1,2 +1,2 @@
-const canvas = document.getElementById("canvas")
+const canvas = document.getElementById("canvas") as HTMLCanvasElement
 alert("hello")
