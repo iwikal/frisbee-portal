@@ -1,0 +1,10 @@
+{
+  "name": "frisbee-portal",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^8.2.1",
+    "rollup": "^2.47.0"
+  }
+}
