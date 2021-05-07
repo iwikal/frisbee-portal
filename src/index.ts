@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 import { GameEntity, Position } from "./gamestate";
 import { Command } from "./command"
+||||||| 93cf524
+import { updateLanguageServiceSourceFile } from "typescript";
+import { GameEntity } from "./gamestate";
+=======
+import { GameEntity } from "./gamestate";
+>>>>>>> 0930f357f8eb671863abdb8f6b285032b5c14c08
 
 const canvas: HTMLCanvasElement = document.getElementById("canvas") as HTMLCanvasElement
 const context: CanvasRenderingContext2D = canvas.getContext("2d")
@@ -12,6 +19,7 @@ window.onresize = resizeCanvas
 const startTime: number = Date.now()
 
 class GameState implements GameEntity {
+<<<<<<< HEAD
   position: Position;
 
   constructor() {
@@ -24,6 +32,13 @@ class GameState implements GameEntity {
     this.phi = 0
   }
   update(dt: number, commands: Command[]) {
+||||||| 93cf524
+  phi: number = 0;
+  update(dt) {
+=======
+  phi: number = 0;
+  update(dt: number) {
+>>>>>>> 0930f357f8eb671863abdb8f6b285032b5c14c08
     this.phi = this.phi + 0.005 * dt
   }
 
@@ -40,7 +55,7 @@ class GameState implements GameEntity {
   phi: number;
 }
 
-let currentState: GameState = new GameState()
+let currentState = new GameState()
 
 function clearCanvas() {
   const previousFillStyle = context.fillStyle
