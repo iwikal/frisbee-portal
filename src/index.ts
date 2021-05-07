@@ -1,14 +1,37 @@
-const canvas = document.getElementById("canvas") as HTMLCanvasElement
-const context = canvas.getContext("2d")
+import { updateLanguageServiceSourceFile } from "typescript";
+import { GameEntity } from "./gamestate";
+
+const canvas: HTMLCanvasElement = document.getElementById("canvas") as HTMLCanvasElement
+const context: CanvasRenderingContext2D = canvas.getContext("2d")
+
+class GameState implements GameEntity {
+  phi: number = 0;
+  update(dt) {
+    this.phi = this.phi + 0.005 * dt
+  }
+
+  draw(ctx) {
+    ctx.fillStyle = "#f0f"
+    const radius = 50
+    const xPos = 100
+    const yPos = 100
+    const xOffset = Math.cos(this.phi) * radius
+    const yOffset = Math.sin(this.phi) * radius
+    ctx.fillRect(xPos + xOffset, yPos + yOffset, 100, 100)
+  }
+}
+
+let currentState: GameState = new GameState()
 
 function clearCanvas() {
+  const previousFillStyle = context.fillStyle
   context.fillStyle = "#fff"
   context.fillRect(0, 0, canvas.width, canvas.height)
+  context.fillStyle = previousFillStyle
 }
 
 function draw() {
   clearCanvas()
-  context.fillStyle = "#f0f"
   const phi = time * 0.005
   const radius = 50
   const xPos = 100
@@ -21,7 +44,7 @@ function draw() {
 function resizeCanvas() {
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
-  draw()
+  currentState.draw(context)
 }
 
 resizeCanvas()
@@ -34,10 +57,12 @@ let time = 0
 let deltaT = 0
 
 function drawLoop() {
+  clearCanvas()
   lastFrameTime = time
   time = Date.now() - startTime
   deltaT = time - lastFrameTime
-  draw()
+  currentState.update(deltaT)
+  currentState.draw(context)
   window.requestAnimationFrame(drawLoop)
 }
 
