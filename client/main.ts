@@ -3,6 +3,7 @@ import { Command } from "./command";
 import { io } from "socket.io-client";
 import { World, Wall } from "./world"
 import { Player } from "../shared/player"
+import { PlayerEntity } from "./PlayerEntity"
 
 const canvas: HTMLCanvasElement = document.getElementById("canvas") as HTMLCanvasElement
 const context: CanvasRenderingContext2D = canvas.getContext("2d")
@@ -77,8 +78,17 @@ class GameState extends GameEntity {
           rotation: 0
         }
       )
-      this.world.walls.push(wall)
+      this.world.children.push(wall)
     }
+
+    this.world.children.push(new PlayerEntity(
+      new Vector(20, 20),
+      {
+        position: new Vector(),
+        rotation: 0
+      },
+      "some_token_idk"
+    ))
   }
 
   draw(ctx: CanvasRenderingContext2D) {

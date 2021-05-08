@@ -3,6 +3,8 @@ import { Command } from "./command"
 export type FillStyle = string | CanvasGradient | CanvasPattern
 
 export class GameEntity {
+  children: GameEntity[] = []
+
   constructor(
       size: Vector,
       transform: Transform,
@@ -15,7 +17,11 @@ export class GameEntity {
     this.size = size
   }
 
-  update(deltaTime: number, commands: Command[]): void {}
+  update(deltaTime: number, commands: Command[]): void {
+    for (const child of this.children) {
+      child.update(deltaTime, commands)
+    }
+  }
   draw(canvasContext: CanvasRenderingContext2D) : void {
     const previousTransform = canvasContext.getTransform()
     canvasContext.translate(this.transform.position.x, this.transform.position.y)
@@ -32,6 +38,11 @@ export class GameEntity {
     } else {
       canvasContext.drawImage(this.sprite.source, -this.size.x / 2, -this.size.y / 2, this.size.x, this.size.y)
     }
+
+    for (const child of this.children) {
+      child.draw(canvasContext)
+    }
+
     canvasContext.setTransform(previousTransform)
   }
 

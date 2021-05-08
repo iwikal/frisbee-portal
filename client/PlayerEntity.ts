@@ -1,7 +1,7 @@
 import { GameEntity, Vector, Transform } from "./gamestate"
 import { Command, MOVE_NORTH, MOVE_SOUTH, MOVE_EAST, MOVE_WEST } from "./command"
 
-export class Player extends GameEntity {
+export class PlayerEntity extends GameEntity {
   token: string
 
   constructor(size: Vector, transform: Transform, token: string = "") {

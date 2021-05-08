@@ -8,16 +8,7 @@ export class Wall extends GameEntity {
 }
 
 export class World extends GameEntity {
-  walls: Wall[] = []
-
   constructor(size: Vector) {
     super(size, {position: new Vector(0, 0), rotation: 0}, {style: ()=>"#fff"})
-  }
-
-  draw(ctx: CanvasRenderingContext2D) {
-    super.draw(ctx)
-    for (const wall of this.walls) {
-      wall.draw(ctx)
-    }
   }
 }
