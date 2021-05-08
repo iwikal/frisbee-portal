@@ -83,10 +83,10 @@ function resizeCanvas() {
   currentState.draw(context)
 }
 
-function drawLoop(lastFrameTime: number) {
+function drawLoop(lastFrameTime: number, acc: number) {
   return () => {
     const currentTime = Date.now() - startTime
-    let acc = currentTime - lastFrameTime
+    acc += currentTime - lastFrameTime
     if (acc >= tickTime) {
       console.log("Tick!")
       currentState.update(tickTime, commands)
@@ -95,10 +95,10 @@ function drawLoop(lastFrameTime: number) {
       clearCanvas()
       currentState.draw(context)
     }
-    window.requestAnimationFrame(drawLoop(currentTime))
+    window.requestAnimationFrame(drawLoop(currentTime, acc))
   }
 }
 
-drawLoop(0)()
+drawLoop(0, 0)()
 resizeCanvas()
 
