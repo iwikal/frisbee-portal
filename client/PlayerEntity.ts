@@ -5,8 +5,10 @@ import { Command, MOVE_NORTH, MOVE_SOUTH, MOVE_EAST, MOVE_WEST } from "./command
 export class PlayerEntity extends GameEntity {
   token: string
 
-  constructor(size: Vector, transform: Transform, token: string = "") {
-    super(size, transform, {style: () => 'red'})
+  constructor(size: number, transform: Transform, color: string, token: string = "") {
+    const path = new Path2D()
+    path.arc(0, 0, size / 2, 0, 2 * Math.PI)
+    super(new Vector(size, size), transform, {style: () => color, path: path})
     this.token = token
   }
 

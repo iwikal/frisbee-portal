@@ -10,7 +10,7 @@ export class GameEntity {
       size: Vector,
       transform: Transform,
       sprite:
-          {style: (CanvasRenderingContext2D) => FillStyle, path?: Path2D}
+          {style: (ctx: CanvasRenderingContext2D) => FillStyle, path?: Path2D}
         | {source: CanvasImageSource}
   ) {
     this.sprite = sprite
@@ -52,6 +52,6 @@ export class GameEntity {
   size: Vector
 
   sprite:
-      {style: (CanvasRenderingContext2D) => FillStyle, path? : Path2D}
+      {style: (ctx: CanvasRenderingContext2D) => FillStyle, path? : Path2D}
     | {source: CanvasImageSource}
 }

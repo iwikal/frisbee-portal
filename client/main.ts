@@ -83,12 +83,12 @@ class GameState extends GameEntity {
     }
 
     this.world.children.push(new PlayerEntity(
-      new Vector(20, 20),
+      50,
       {
-        position: new Vector(),
+        position: new Vector(120, 240),
         rotation: 0
       },
-      "some_token_idk"
+      "blue"
     ))
   }
 
