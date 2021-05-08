@@ -1,4 +1,4 @@
-import { Vector } from './gamestate'
+import { Vector } from '../shared/vector'
 
 export interface Collider {
   farthestPointInDirection(direction: Vector): Vector

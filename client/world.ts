@@ -1,4 +1,5 @@
-import { GameEntity, Vector, Transform } from "./gamestate";
+import { GameEntity } from "./gamestate";
+import { Transform, Vector } from "../shared/vector";
 
 export class Wall extends GameEntity {
 

@@ -1,4 +1,5 @@
-import { GameEntity, Vector, Transform } from "./gamestate"
+import { GameEntity } from "./gamestate"
+import { Transform, Vector } from "../shared/vector";
 import { Command, MOVE_NORTH, MOVE_SOUTH, MOVE_EAST, MOVE_WEST } from "./command"
 
 export class PlayerEntity extends GameEntity {

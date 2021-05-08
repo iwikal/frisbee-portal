@@ -1,4 +1,5 @@
-import { GameEntity, Transform, Vector } from "./gamestate";
+import { GameEntity } from "./gamestate";
+import { Transform, Vector } from "../shared/vector";
 import { Command } from "./command";
 import { io } from "socket.io-client";
 import { World, Wall } from "./world"
