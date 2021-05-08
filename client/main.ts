@@ -1,4 +1,4 @@
-import { GameEntity, Position } from "./gamestate";
+import { GameEntity, Transform, Vector } from "./gamestate";
 import { Command } from "./command";
 import { io } from "socket.io-client";
 import { World, Wall } from "./world"
@@ -45,34 +45,38 @@ window.addEventListener('resize', resizeCanvas)
 
 const startTime: number = Date.now()
 
-class GameState implements GameEntity {
-  world = new World();
-  position: Position;
+class GameState extends GameEntity {
+  world: World
   players = new Map();
+  transform: Transform;
+  phi = 0
+  angVel = 0.005
 
-  constructor() {
-    this.position = {
-      x: 100,
-      y: 100,
-      r: 0
+  constructor(canvas: HTMLCanvasElement) {
+    super(
+      new Vector(canvas.width, canvas.height),
+      {position: new Vector(100, 100), rotation: 0},
+      {style: ()=>"#fff"}
+    )
+    this.transform = {
+      position: new Vector(100, 100),
+      rotation: 0,
     }
 
-    this.phi = 0
+    this.world = new World(new Vector(canvas.width, canvas.height));
 
-    const [width, height] = [50, 50]
+    const wallSize = new Vector(50, 50)
 
     for (const i of [0, 1]) {
-      const wall = new Wall()
-      wall.pos.x = i * 200
-      wall.pos.x += 100
-      wall.pos.y += 100
-      wall.size = new DOMPoint(width, height)
+      const wall = new Wall(
+        wallSize,
+        {
+          position: new Vector(100 + 200 * i, 100),
+          rotation: 0
+        }
+      )
       this.world.walls.push(wall)
     }
-  }
-
-  update(dt: number, commands: Command[]) {
-    this.phi = this.phi + 0.005 * dt
   }
 
   draw(ctx: CanvasRenderingContext2D) {
@@ -86,16 +90,12 @@ class GameState implements GameEntity {
     ctx.fillRect(xPos + xOffset, yPos + yOffset, 100, 100)
   }
 
-  showPlayers(): void {
-    for (let [token, player] of this.players) {
-      console.log(token, player)
-    }
+  update(dt: number, commands: Command[]) {
+    this.phi = this.phi + this.angVel * dt
   }
-
-  phi: number;
 }
 
-let currentState = new GameState()
+let currentState = new GameState(canvas)
 
 function clearCanvas() {
   const previousFillStyle = context.fillStyle
@@ -114,14 +114,16 @@ function drawLoop(lastFrameTime: number, acc: number) {
   return () => {
     const currentTime = Date.now() - startTime
     acc += currentTime - lastFrameTime
-    if (acc >= tickTime) {
-      console.log("Tick!")
+
+    while (acc >= tickTime) {
       currentState.update(tickTime, commands)
       acc -= tickTime
       commands = []
-      clearCanvas()
-      currentState.draw(context)
     }
+
+    clearCanvas()
+    currentState.draw(context)
+
     window.requestAnimationFrame(drawLoop(currentTime, acc))
   }
 }
