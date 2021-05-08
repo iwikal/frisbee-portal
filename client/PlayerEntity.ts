@@ -5,11 +5,14 @@ import { Command, MOVE_NORTH, MOVE_SOUTH, MOVE_EAST, MOVE_WEST } from "./command
 export class PlayerEntity extends GameEntity {
   token: string
 
+  velocity: Vector
+
   constructor(size: number, transform: Transform, color: string, token: string) {
     const path = new Path2D()
     path.arc(0, 0, size / 2, 0, 2 * Math.PI)
     super(new Vector(size, size), transform, {style: () => color, path: path})
     this.token = token
+    this.velocity = new Vector(0, 0)
   }
 
   update(dt: number, cmds: Command[]) {
@@ -24,16 +27,27 @@ export class PlayerEntity extends GameEntity {
           console.log(`got keydown event ${cmd.payload.keydown.toString()}`)
           switch (cmd.payload.keydown) {
             case MOVE_NORTH:
-              this.transform.position.y -= dt
+              this.velocity.y = -2
               break
             case MOVE_SOUTH:
-              this.transform.position.y += dt
+              this.velocity.y = 2
               break
             case MOVE_EAST:
-              this.transform.position.x += dt
+              this.velocity.x = 2
               break
             case MOVE_WEST:
-              this.transform.position.x -= dt
+              this.velocity.x = -2
+              break
+          }
+        } else if ("keyup" in cmd.payload) {
+          switch (cmd.payload.keyup) {
+            case MOVE_NORTH:
+            case MOVE_SOUTH:
+              this.velocity.y = 0
+              break
+            case MOVE_EAST:
+            case MOVE_WEST:
+              this.velocity.x = 0
               break
           }
         } else if ("setOwnPosition" in cmd.payload) {
@@ -43,6 +57,9 @@ export class PlayerEntity extends GameEntity {
         }
       }
     }
+
+    this.transform.position.x += this.velocity.x * dt
+    this.transform.position.y += this.velocity.y * dt
 
     return true
   }

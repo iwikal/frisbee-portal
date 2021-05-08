@@ -186,14 +186,16 @@ function drawLoop(lastFrameTime: number, acc: number) {
 }
 
 window.addEventListener("keydown", (evt) => {
-  for (const [symbolicKey, keycode] of keyBindings.entries()) {
-    if (keycode === evt.code) {
-      console.log(`keydown ${evt.code}`)
-      commands.push({
-        time: Date.now(),
-        source: myToken,
-        payload: {keydown: symbolicKey}
-      })
+  if ( ! evt.repeat ) {
+    for (const [symbolicKey, keycode] of keyBindings.entries()) {
+      if (keycode === evt.code) {
+        console.log(`keydown ${evt.code}`)
+        commands.push({
+          time: Date.now(),
+          source: myToken,
+          payload: {keydown: symbolicKey}
+        })
+      }
     }
   }
 })
