@@ -30,14 +30,12 @@ export class GameEntity {
     canvasContext.rotate(this.transform.rotation)
     switch (this.sprite[0]) {
       case "Style":
-        //console.log(`Drawing a ${this.size.x}x${this.size.y} object at ${this.transform} using fillstyle ${this.sprite[1]}`)
         const previousFillStyle = canvasContext.fillStyle
         canvasContext.fillStyle = this.sprite[1]
         canvasContext.fillRect(-this.size.x / 2, -this.size.y / 2, this.size.x, this.size.y)
         canvasContext.fillStyle = previousFillStyle
         break;
       case "Source":
-        console.log(`Drawing a size-${this.size} object at ${this.transform} using imagesource ${this.sprite[1]}`)
         canvasContext.drawImage(this.sprite[1], 0, 0, this.size.x, this.size.y)
         break;
       default:
