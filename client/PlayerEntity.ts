@@ -19,12 +19,9 @@ export class PlayerEntity extends GameEntity {
     super.update(dt, cmds)
     for (const cmd of cmds) {
       // TODO: Check time
-      
-      console.log(`${this.token}, ${cmd.source}`)
 
       if (cmd.source === this.token) {
         if ("keydown" in cmd.payload) {
-          console.log(`got keydown event ${cmd.payload.keydown.toString()}`)
           switch (cmd.payload.keydown) {
             case MOVE_NORTH:
               this.velocity.y = -2

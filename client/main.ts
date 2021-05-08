@@ -189,7 +189,6 @@ window.addEventListener("keydown", (evt) => {
   if ( ! evt.repeat ) {
     for (const [symbolicKey, keycode] of keyBindings.entries()) {
       if (keycode === evt.code) {
-        console.log(`keydown ${evt.code}`)
         commands.push({
           time: Date.now(),
           source: myToken,
@@ -203,7 +202,6 @@ window.addEventListener("keydown", (evt) => {
 window.addEventListener("keyup", (evt) => {
   for (const [symbolicKey, keycode] of keyBindings.entries()) {
     if (keycode === evt.code) {
-      console.log(`keyup ${evt.code}`)
       commands.push({
         time: Date.now(),
         source: myToken,
