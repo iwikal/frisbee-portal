@@ -28,6 +28,8 @@ const startTime: number = Date.now()
 class GameState implements GameEntity {
   world = new World();
   position: Position;
+  phi = 0
+  angVel = 0.005
 
   constructor() {
     this.position = {
@@ -35,8 +37,6 @@ class GameState implements GameEntity {
       y: 100,
       r: 0
     }
-
-    this.phi = 0
 
     const [width, height] = [50, 50]
 
@@ -51,7 +51,7 @@ class GameState implements GameEntity {
   }
 
   update(dt: number, commands: Command[]) {
-    this.phi = this.phi + 0.005 * dt
+    this.phi = this.phi + this.angVel * dt
   }
 
   draw(ctx: CanvasRenderingContext2D) {
@@ -64,8 +64,6 @@ class GameState implements GameEntity {
     const yOffset = Math.sin(this.phi) * radius
     ctx.fillRect(xPos + xOffset, yPos + yOffset, 100, 100)
   }
-
-  phi: number;
 }
 
 let currentState = new GameState()
@@ -87,14 +85,16 @@ function drawLoop(lastFrameTime: number, acc: number) {
   return () => {
     const currentTime = Date.now() - startTime
     acc += currentTime - lastFrameTime
-    if (acc >= tickTime) {
-      console.log("Tick!")
+
+    while (acc >= tickTime) {
       currentState.update(tickTime, commands)
       acc -= tickTime
       commands = []
-      clearCanvas()
-      currentState.draw(context)
     }
+
+    clearCanvas()
+    currentState.draw(context)
+
     window.requestAnimationFrame(drawLoop(currentTime, acc))
   }
 }
