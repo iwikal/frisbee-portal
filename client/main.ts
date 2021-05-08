@@ -3,7 +3,6 @@ import { Command } from "./command";
 import { io } from "socket.io-client";
 import { World, Wall } from "./world"
 import { Player } from "../shared/player"
-import { v4 as uuidv4 } from "uuid"
 
 const canvas: HTMLCanvasElement = document.getElementById("canvas") as HTMLCanvasElement
 const context: CanvasRenderingContext2D = canvas.getContext("2d")
@@ -14,27 +13,30 @@ socket.on("connect", () => {
   socket.send("Hi, can I play?");
 });
 
-let localPlayer: Player;
+let localPlayer: Player
+let myToken: String
 
 socket.on("newUser", data => {
   // When someone joins when there are people already connected
   currentState.players = new Map(JSON.parse(data.players))
   localPlayer = data.player
-  console.log(currentState.players)
+  myToken = data.token
 });
 
 socket.on('connectedUserBroadcast', data => {
   // Add new user when they connect
-  console.log("New user connected")
   currentState.players.set(data.token, data.player)
-  console.log(currentState.players)
 });
 
 socket.on('disconnectedUserBroadcast', data => {
   // Remove a user when they disconnect
-  console.log("A user has disconnected")
   currentState.players.delete(data.token)
-  console.log(currentState.players)
+});
+
+socket.on('playerMoved', data => {
+  // Update a player's position
+  currentState.players.get(data.token).x = data.x
+  currentState.players.get(data.token).y = data.y
 });
 
 let commands: Command[]
@@ -116,9 +118,25 @@ function drawLoop(lastFrameTime: number, acc: number) {
     acc += currentTime - lastFrameTime
 
     while (acc >= tickTime) {
+      if (localPlayer !== undefined) {
+
+        if (localPlayer.lastX !== localPlayer.x || localPlayer.lastY !== localPlayer.y) {
+          localPlayer.lastX = localPlayer.x
+          localPlayer.lastY = localPlayer.y
+          localPlayer.moved = true
+        }
+      }
+      
       currentState.update(tickTime, commands)
       acc -= tickTime
+
       commands = []
+    }
+
+
+    if (localPlayer !== undefined && localPlayer.moved) {
+      socket.emit('playerMoved', {newX: localPlayer.x, newY: localPlayer.y})
+      localPlayer.moved = false
     }
 
     clearCanvas()

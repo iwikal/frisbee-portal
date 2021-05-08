@@ -1,10 +1,17 @@
 export class Player {
     x: number
     y: number
+    lastX: number
+    lastY: number
+    moved: boolean
 
-    constructor(token: String, x: number, y: number) {
+
+    constructor(x: number, y: number) {
         this.x = x
         this.y = y
+        this.lastX = x
+        this.lastY = y
+        this.moved = false
     }
 
     update(x: number, y: number): void {
@@ -15,5 +22,4 @@ export class Player {
     printPosition() : void {
         console.log("Player position " + this.x + ":" + this.y)
     }
-
 }

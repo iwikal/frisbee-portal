@@ -1,5 +1,4 @@
 import { Command } from "./command"
-import { Player } from "../shared/player"
 
 export type FillStyle = string | CanvasGradient | CanvasPattern
 

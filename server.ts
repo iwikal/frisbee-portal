@@ -3,7 +3,6 @@ const { v4: uuidv4 } = require('uuid');
 import { Player } from './shared/player';
 
 let players = new Map()
-var allClients = new Map<any, String>();
 
 const io = require("socket.io")(httpServer, {
   cors: {
@@ -15,7 +14,7 @@ const io = require("socket.io")(httpServer, {
 io.on("connection", (socket: any) => {
   
   let token: String = uuidv4();
-  let player: Player = new Player(token, 10, 10)
+  let player: Player = new Player(10, 10)
   players.set(token, player)
   
   // Send data to newly connected client
@@ -33,6 +32,11 @@ io.on("connection", (socket: any) => {
     // Broadcast to all clients that player disconnected
     socket.broadcast.emit('disconnectedUserBroadcast', {token: token})
   });
+
+  socket.on('playerMoved', (data: any) => {
+    // Broadcast to everyone the new location of the player
+    socket.broadcast.emit('playerMoved', {token: token, x: data.newX, y: data.newY})
+  })
 });
 
 httpServer.listen(3000);
