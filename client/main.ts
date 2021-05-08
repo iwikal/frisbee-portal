@@ -1,6 +1,6 @@
 import { GameEntity } from "./gamestate";
 import { Transform, Vector } from "../shared/vector";
-import { Command } from "./command";
+import { Command, keyBindings } from "./command";
 import { io } from "socket.io-client";
 import { World, Wall } from "./world"
 import { Player } from "../shared/player"
@@ -16,23 +16,31 @@ socket.on("connect", () => {
 });
 
 let localPlayer: Player
-let myToken: String
+let myToken: string
 
 socket.on("newUser", data => {
   // When someone joins when there are people already connected
-  currentState.players = new Map(JSON.parse(data.players))
   localPlayer = data.player
   myToken = data.token
+  if (currentState === undefined) {
+    currentState = new GameState(canvas)
+    drawLoop(0, 0)()
+  }
+  currentState.players = new Map(JSON.parse(data.players))
 });
 
 socket.on('connectedUserBroadcast', data => {
   // Add new user when they connect
-  currentState.players.set(data.token, data.player)
+  if (currentState !== undefined) {
+    currentState.players.set(data.token, data.player)
+  }
 });
 
 socket.on('disconnectedUserBroadcast', data => {
   // Remove a user when they disconnect
-  currentState.players.delete(data.token)
+  if (currentState !== undefined) {
+    currentState.players.delete(data.token)
+  }
 });
 
 socket.on('playerMoved', data => {
@@ -41,7 +49,7 @@ socket.on('playerMoved', data => {
   currentState.players.get(data.token).y = data.y
 });
 
-let commands: Command[]
+let commands: Command[] = []
 
 const tickTime: number = 1000/60
 
@@ -88,7 +96,8 @@ class GameState extends GameEntity {
         position: new Vector(120, 240),
         rotation: 0
       },
-      "blue"
+      "blue",
+      myToken
     ))
   }
 
@@ -105,10 +114,11 @@ class GameState extends GameEntity {
 
   update(dt: number, commands: Command[]) {
     this.phi = this.phi + this.angVel * dt
+    this.world.update(dt, commands)
   }
 }
 
-let currentState = new GameState(canvas)
+let currentState: GameState // = new GameState(canvas)
 
 function clearCanvas() {
   const previousFillStyle = context.fillStyle
@@ -120,7 +130,9 @@ function clearCanvas() {
 function resizeCanvas() {
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
-  currentState.draw(context)
+  if (currentState !== undefined) {
+    currentState.draw(context)
+  }
 }
 
 function drawLoop(lastFrameTime: number, acc: number) {
@@ -157,5 +169,30 @@ function drawLoop(lastFrameTime: number, acc: number) {
   }
 }
 
-drawLoop(0, 0)()
+window.addEventListener("keydown", (evt) => {
+  for (const [symbolicKey, keycode] of keyBindings.entries()) {
+    if (keycode === evt.code) {
+      console.log(`keydown ${evt.code}`)
+      commands.push({
+        time: Date.now(),
+        source: myToken,
+        payload: {keydown: symbolicKey}
+      })
+    }
+  }
+})
+
+window.addEventListener("keyup", (evt) => {
+  for (const [symbolicKey, keycode] of keyBindings.entries()) {
+    if (keycode === evt.code) {
+      console.log(`keyup ${evt.code}`)
+      commands.push({
+        time: Date.now(),
+        source: myToken,
+        payload: {keyup: symbolicKey}
+      })
+    }
+  }
+})
+
 resizeCanvas()
