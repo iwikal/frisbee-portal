@@ -35,10 +35,7 @@ class GameState extends GameEntity {
     super(
       new Vector(canvas.width, canvas.height),
       {position: new Vector(100, 100), rotation: 0},
-      ["Style", "#fff"],
-      (dt)=>{
-        this.phi = this.phi + this.angVel * dt
-      }
+      ["Style", "#fff"]
     )
     this.transform = {
       position: new Vector(100, 100),
@@ -70,6 +67,10 @@ class GameState extends GameEntity {
     const xOffset = Math.cos(this.phi) * radius
     const yOffset = Math.sin(this.phi) * radius
     ctx.fillRect(xPos + xOffset, yPos + yOffset, 100, 100)
+  }
+
+  update(dt: number, commands: Command[]) {
+    this.phi = this.phi + this.angVel * dt
   }
 }
 

@@ -8,22 +8,14 @@ export class GameEntity {
       transform: Transform,
       sprite:
           ["Style", FillStyle]
-        | ["Source", CanvasImageSource],
-      update:
-        (
-          this: GameEntity,
-          deltaTime: number,
-          commands: Command[]
-        ) => void
+        | ["Source", CanvasImageSource]
   ) {
     this.sprite = sprite
     this.transform = transform
-    this.update = update
-    console.log(`${this.transform.position.x}x${this.transform.position.y}`)
     this.size = size
   }
 
-  update: (deltaTime: number, commands: Command[]) => void;
+  update(deltaTime: number, commands: Command[]): void {}
   draw(canvasContext: CanvasRenderingContext2D) : void {
     const previousTransform = canvasContext.getTransform()
     canvasContext.translate(this.transform.position.x, this.transform.position.y)
