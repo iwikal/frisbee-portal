@@ -1,6 +1,7 @@
 import { GameEntity, Position } from "./gamestate";
 import { Command } from "./command";
 import { io } from "socket.io-client";
+import { World, Wall } from "./world"
 
 const canvas: HTMLCanvasElement = document.getElementById("canvas") as HTMLCanvasElement
 const context: CanvasRenderingContext2D = canvas.getContext("2d")
@@ -20,10 +21,12 @@ let commands: Command[]
 
 const tickTime: number = 1000/60
 
-window.onresize = resizeCanvas
+window.addEventListener('resize', resizeCanvas)
+
 const startTime: number = Date.now()
 
 class GameState implements GameEntity {
+  world = new World();
   position: Position;
 
   constructor() {
@@ -34,6 +37,17 @@ class GameState implements GameEntity {
     }
 
     this.phi = 0
+
+    const [width, height] = [50, 50]
+
+    for (const i of [0, 1]) {
+      const wall = new Wall()
+      wall.pos.x = i * 200
+      wall.pos.x += 100
+      wall.pos.y += 100
+      wall.size = new DOMPoint(width, height)
+      this.world.walls.push(wall)
+    }
   }
 
   update(dt: number, commands: Command[]) {
@@ -41,6 +55,7 @@ class GameState implements GameEntity {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
+    this.world.draw(ctx)
     ctx.fillStyle = "#f0f"
     const radius = 50
     const xPos = 100
