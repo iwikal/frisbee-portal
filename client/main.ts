@@ -1,4 +1,4 @@
-import { GameEntity, Position } from "./gamestate";
+import { GameEntity, Transform, Vector } from "./gamestate";
 import { Command } from "./command";
 import { io } from "socket.io-client";
 import { World, Wall } from "./world"
@@ -27,25 +27,24 @@ const startTime: number = Date.now()
 
 class GameState implements GameEntity {
   world = new World();
-  position: Position;
+  transform: Transform;
   phi = 0
   angVel = 0.005
 
   constructor() {
-    this.position = {
-      x: 100,
-      y: 100,
-      r: 0
+    this.transform = {
+      position: new Vector(100, 100),
+      rotation: 0,
     }
 
     const [width, height] = [50, 50]
 
     for (const i of [0, 1]) {
       const wall = new Wall()
-      wall.pos.x = i * 200
-      wall.pos.x += 100
-      wall.pos.y += 100
-      wall.size = new DOMPoint(width, height)
+      wall.transform.position.x = i * 200
+      wall.transform.position.x += 100
+      wall.transform.position.y += 100
+      wall.size = new Vector(width, height)
       this.world.walls.push(wall)
     }
   }
