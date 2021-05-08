@@ -38,8 +38,12 @@ export class PlayerEntity extends GameEntity {
           }
         } else if ("setOwnPosition" in cmd.payload) {
           this.transform.position = cmd.payload.setOwnPosition
+        } else if ("disconnect" in cmd.payload) {
+          return false
         }
       }
     }
+
+    return true
   }
 }

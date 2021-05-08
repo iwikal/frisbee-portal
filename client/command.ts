@@ -6,7 +6,11 @@ export interface Command {
   payload: EventPayload
 }
 
-export type EventPayload = {keyup: symbol} | {keydown: symbol} | {setOwnPosition: Vector}
+export type EventPayload =
+  | {keyup: symbol}
+  | {keydown: symbol}
+  | {setOwnPosition: Vector}
+  | {disconnect: {}}
 
 export const MOVE_NORTH = Symbol("north")
 export const MOVE_EAST = Symbol("east")

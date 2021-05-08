@@ -27,11 +27,33 @@ socket.on("newUser", data => {
     drawLoop(0, 0)()
   }
   currentState.players = new Map(JSON.parse(data.players))
+  for (const [token, playerData] of currentState.players) {
+    const player = new PlayerEntity(
+      50,
+      {
+        position: new Vector(playerData.x, playerData.y),
+        rotation: 0
+      },
+      "red",
+      token
+    )
+    currentState.world.children.push(player)
+  }
 });
 
 socket.on('connectedUserBroadcast', data => {
   // Add new user when they connect
   if (currentState !== undefined) {
+    const player = new PlayerEntity(
+      50,
+      {
+        position: new Vector(data.player.x, data.player.y),
+        rotation: 0
+      },
+      "red",
+      data.token
+    )
+    currentState.world.children.push(player)
     currentState.players.set(data.token, data.player)
   }
 });
@@ -45,8 +67,11 @@ socket.on('disconnectedUserBroadcast', data => {
 
 socket.on('playerMoved', data => {
   // Update a player's position
-  currentState.players.get(data.token).x = data.x
-  currentState.players.get(data.token).y = data.y
+  commands.push({
+    time: 0 /* or whatever the server says */,
+    source: data.token,
+    payload: {setOwnPosition: new Vector(data.x, data.y)}
+  })
 });
 
 let commands: Command[] = []
@@ -89,16 +114,6 @@ class GameState extends GameEntity {
       )
       this.world.children.push(wall)
     }
-
-    this.world.children.push(new PlayerEntity(
-      50,
-      {
-        position: new Vector(120, 240),
-        rotation: 0
-      },
-      "blue",
-      myToken
-    ))
   }
 
   draw(ctx: CanvasRenderingContext2D) {
@@ -115,6 +130,7 @@ class GameState extends GameEntity {
   update(dt: number, commands: Command[]) {
     this.phi = this.phi + this.angVel * dt
     this.world.update(dt, commands)
+    return true
   }
 }
 

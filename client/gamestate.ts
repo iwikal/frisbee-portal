@@ -18,10 +18,12 @@ export class GameEntity {
     this.size = size
   }
 
-  update(deltaTime: number, commands: Command[]): void {
-    for (const child of this.children) {
-      child.update(deltaTime, commands)
-    }
+  update(deltaTime: number, commands: Command[]): boolean {
+    this.children = this.children.filter((child) => {
+      return child.update(deltaTime, commands)
+    })
+
+    return true
   }
   draw(canvasContext: CanvasRenderingContext2D) : void {
     const previousTransform = canvasContext.getTransform()
