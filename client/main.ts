@@ -159,4 +159,3 @@ function drawLoop(lastFrameTime: number, acc: number) {
 
 drawLoop(0, 0)()
 resizeCanvas()
-

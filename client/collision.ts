@@ -16,6 +16,27 @@ export class ColliderCircle implements Collider {
   }
 }
 
+export class ColliderBox implements Collider {
+  width: number
+  height: number
+
+  constructor(width = 1, height = 1) {
+    this.width = width
+    this.height = height
+  }
+
+  farthestPointInDirection({ x, y }: Vector) {
+    function coeff(a: number) {
+      return (Math.sign(a) || 1) / 2
+    }
+
+    return new Vector(
+      coeff(x) * this.width,
+      coeff(y) * this.height,
+    )
+  }
+}
+
 function support(
   collider1: Collider,
   collider2: Collider,
@@ -30,7 +51,7 @@ function support(
 
 function nearZero(a: number): boolean {
   const TOLERANCE = .0001
-  return a * a < TOLERANCE * TOLERANCE
+  return Math.abs(a) < TOLERANCE
 }
 
 function clamp(a: number, lower: number, upper: number): number {
