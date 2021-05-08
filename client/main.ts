@@ -35,7 +35,7 @@ class GameState extends GameEntity {
     super(
       new Vector(canvas.width, canvas.height),
       {position: new Vector(100, 100), rotation: 0},
-      ["Style", "#fff"]
+      {style: "#fff"}
     )
     this.transform = {
       position: new Vector(100, 100),

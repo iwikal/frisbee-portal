@@ -7,8 +7,9 @@ export class GameEntity {
       size: Vector,
       transform: Transform,
       sprite:
-          ["Style", FillStyle]
-        | ["Source", CanvasImageSource]
+          {style: FillStyle}
+        | {style: FillStyle, path: Path2D}
+        | {source: CanvasImageSource}
   ) {
     this.sprite = sprite
     this.transform = transform
@@ -20,18 +21,17 @@ export class GameEntity {
     const previousTransform = canvasContext.getTransform()
     canvasContext.translate(this.transform.position.x, this.transform.position.y)
     canvasContext.rotate(this.transform.rotation)
-    switch (this.sprite[0]) {
-      case "Style":
-        const previousFillStyle = canvasContext.fillStyle
-        canvasContext.fillStyle = this.sprite[1]
+    if ("style" in this.sprite) {
+      const previousFillStyle = canvasContext.fillStyle
+      canvasContext.fillStyle = this.sprite.style
+      if ("path" in this.sprite) {
+        canvasContext.fill(this.sprite.path)
+      } else {
         canvasContext.fillRect(-this.size.x / 2, -this.size.y / 2, this.size.x, this.size.y)
-        canvasContext.fillStyle = previousFillStyle
-        break;
-      case "Source":
-        canvasContext.drawImage(this.sprite[1], -this.size.x / 2, -this.size.y / 2, this.size.x, this.size.y)
-        break;
-      default:
-        console.log("This should be impossible")
+      }
+      canvasContext.fillStyle = previousFillStyle
+    } else {
+      canvasContext.drawImage(this.sprite.source, -this.size.x / 2, -this.size.y / 2, this.size.x, this.size.y)
     }
     canvasContext.setTransform(previousTransform)
   }
@@ -40,7 +40,9 @@ export class GameEntity {
 
   size: Vector
 
-  sprite: ["Style", FillStyle] | ["Source", CanvasImageSource]
+  sprite:
+      {style: FillStyle, path? : Path2D}
+    | {source: CanvasImageSource}
 }
 
 interface VectorTemplate {
