@@ -1,33 +1,23 @@
-import { GameEntity, Vector } from "./gamestate";
+import { GameEntity, Vector, Transform } from "./gamestate";
 
-export class Wall implements GameEntity {
-  transform = { position: new Vector(), rotation: 0 }
-  size = new Vector()
+export class Wall extends GameEntity {
 
-  draw(ctx: CanvasRenderingContext2D) {
-    const oldTransform = ctx.getTransform()
-    const { position, rotation } = this.transform
-    ctx.rotate(rotation)
-    ctx.translate(position.x, position.y)
-
-    ctx.fillRect(-this.size.x / 2, -this.size.y / 2, this.size.x, this.size.y)
-
-    ctx.setTransform(oldTransform)
+  constructor(size: Vector, transform: Transform) {
+    super(size, transform, ["Style", "#222"], ()=>{})
   }
-
-  update() {}
 }
 
-export class World implements GameEntity {
+export class World extends GameEntity {
   walls: Wall[] = []
-  transform = { position: new Vector(), rotation: 0 }
+
+  constructor(size: Vector) {
+    super(size, {position: new Vector(0, 0), rotation: 0}, ["Style", "#fff"], ()=>{})
+  }
 
   draw(ctx: CanvasRenderingContext2D) {
-    ctx.fillStyle = "#222"
+    super.draw(ctx)
     for (const wall of this.walls) {
       wall.draw(ctx)
     }
   }
-
-  update() {}
 }

@@ -25,32 +25,40 @@ window.addEventListener('resize', resizeCanvas)
 
 const startTime: number = Date.now()
 
-class GameState implements GameEntity {
-  world = new World();
+class GameState extends GameEntity {
+  world: World
   transform: Transform;
   phi = 0
   angVel = 0.005
 
-  constructor() {
+  constructor(canvas: HTMLCanvasElement) {
+    super(
+      new Vector(canvas.width, canvas.height),
+      {position: new Vector(100, 100), rotation: 0},
+      ["Style", "#fff"],
+      (dt)=>{
+        this.phi = this.phi + this.angVel * dt
+      }
+    )
     this.transform = {
       position: new Vector(100, 100),
       rotation: 0,
     }
 
-    const [width, height] = [50, 50]
+    this.world = new World(new Vector(canvas.width, canvas.height));
+
+    const wallSize = new Vector(50, 50)
 
     for (const i of [0, 1]) {
-      const wall = new Wall()
-      wall.transform.position.x = i * 200
-      wall.transform.position.x += 100
-      wall.transform.position.y += 100
-      wall.size = new Vector(width, height)
+      const wall = new Wall(
+        wallSize,
+        {
+          position: new Vector(100 + 200 * i, 100),
+          rotation: 0
+        }
+      )
       this.world.walls.push(wall)
     }
-  }
-
-  update(dt: number, commands: Command[]) {
-    this.phi = this.phi + this.angVel * dt
   }
 
   draw(ctx: CanvasRenderingContext2D) {
@@ -65,7 +73,7 @@ class GameState implements GameEntity {
   }
 }
 
-let currentState = new GameState()
+let currentState = new GameState(canvas)
 
 function clearCanvas() {
   const previousFillStyle = context.fillStyle
