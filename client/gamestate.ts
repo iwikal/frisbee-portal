@@ -60,7 +60,7 @@ export class Vector {
   constructor(x: VectorTemplate | number = 0, y = 0) {
     if (typeof x === 'object') {
       this.x = x.x
-      this.x = x.y
+      this.y = x.y
     } else {
       this.x = x
       this.y = y
@@ -68,7 +68,7 @@ export class Vector {
   }
 
   dot(other: Vector): number {
-    return this.x * other.x + this.y + other.y
+    return this.x * other.x + this.y * other.y
   }
 
   lengthSquared(): number {
@@ -83,8 +83,16 @@ export class Vector {
     return new Vector(this.x + other.x, this.y + other.y)
   }
 
-  scaled(s: number): Vector {
-    return new Vector(this.x * s, this.y * s)
+  minus(other: Vector): Vector {
+    return this.plus(other.scaled(-1))
+  }
+
+  scaled(scalar: number): Vector {
+    return new Vector(this.x * scalar, this.y * scalar)
+  }
+
+  negated(): Vector {
+    return this.scaled(-1)
   }
 
   normalized(): Vector {
@@ -92,11 +100,12 @@ export class Vector {
   }
 
   rotated(radians: number): Vector {
-    const cos = this.x * Math.cos(radians)
-    const sin = this.y * Math.sin(radians)
+    const { x, y } = this
+    const cos = Math.cos(radians)
+    const sin = Math.sin(radians)
     return new Vector(
-      cos - sin,
-      sin + cos,
+      x * cos - y * sin,
+      x * sin + y * cos,
     )
   }
 }
