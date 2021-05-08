@@ -1,4 +1,9 @@
 const httpServer = require("http").createServer();
+const { v4: uuidv4 } = require('uuid');
+import { Player } from './shared/player';
+
+let players = new Map()
+var allClients = new Map<any, String>();
 
 const io = require("socket.io")(httpServer, {
   cors: {
@@ -8,12 +13,25 @@ const io = require("socket.io")(httpServer, {
 });
 
 io.on("connection", (socket: any) => {
-  // either with send()
-  socket.send("Hello from the server!");
+  
+  let token: String = uuidv4();
+  let player: Player = new Player(token, 10, 10)
+  players.set(token, player)
+  
+  // Send data to newly connected client
+  socket.emit('newUser', {token: token, player: player, players: JSON.stringify([...players])});
 
-  // handle the event sent with socket.send()
-  socket.on("message", (data: any) => {
-    console.log(data);
+  // Broadcast that someone new has connected
+  socket.broadcast.emit('connectedUserBroadcast', {token: token, player: player})
+
+  socket.on('disconnect', function() {
+    console.log("Someone disconnected")
+
+    // Remove player from players list
+    players.delete(token)
+
+    // Broadcast to all clients that player disconnected
+    socket.broadcast.emit('disconnectedUserBroadcast', {token: token})
   });
 });
 

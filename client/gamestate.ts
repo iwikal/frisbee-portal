@@ -1,4 +1,5 @@
 import { Command } from "./command"
+import { Player } from "../shared/player"
 
 export interface GameEntity {
   draw(canvasContext: CanvasRenderingContext2D) : void
