@@ -7,8 +7,7 @@ export class GameEntity {
       size: Vector,
       transform: Transform,
       sprite:
-          {style: FillStyle}
-        | {style: FillStyle, path: Path2D}
+          {style: (CanvasRenderingContext2D) => FillStyle, path?: Path2D}
         | {source: CanvasImageSource}
   ) {
     this.sprite = sprite
@@ -23,7 +22,7 @@ export class GameEntity {
     canvasContext.rotate(this.transform.rotation)
     if ("style" in this.sprite) {
       const previousFillStyle = canvasContext.fillStyle
-      canvasContext.fillStyle = this.sprite.style
+      canvasContext.fillStyle = this.sprite.style(canvasContext)
       if ("path" in this.sprite) {
         canvasContext.fill(this.sprite.path)
       } else {
@@ -41,7 +40,7 @@ export class GameEntity {
   size: Vector
 
   sprite:
-      {style: FillStyle, path? : Path2D}
+      {style: (CanvasRenderingContext2D) => FillStyle, path? : Path2D}
     | {source: CanvasImageSource}
 }
 
