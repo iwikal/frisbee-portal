@@ -55,9 +55,6 @@ export class PlayerEntity extends GameEntity {
       }
     }
 
-    this.transform.position.x += this.velocity.x * dt
-    this.transform.position.y += this.velocity.y * dt
-
     return true
   }
 }

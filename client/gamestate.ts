@@ -5,6 +5,7 @@ export type FillStyle = string | CanvasGradient | CanvasPattern
 
 export class GameEntity {
   children: GameEntity[] = []
+  velocity: Vector = new Vector(0, 0)
 
   constructor(
       size: Vector,
@@ -22,6 +23,9 @@ export class GameEntity {
     this.children = this.children.filter((child) => {
       return child.update(deltaTime, commands)
     })
+
+    this.transform.position.x += this.velocity.x * deltaTime
+    this.transform.position.y += this.velocity.y * deltaTime
 
     return true
   }
