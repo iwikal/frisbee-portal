@@ -33,6 +33,8 @@ export class PlayerEntity extends GameEntity {
               this.transform.position.x -= 100 * dt
               break
           }
+        } else if ("setOwnPosition" in cmd.payload) {
+          this.transform.position = cmd.payload.setOwnPosition
         }
       }
     }

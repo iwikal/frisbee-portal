@@ -1,10 +1,12 @@
+import { Vector } from "../shared/vector"
+
 export interface Command {
     time: number
     source: string
     payload: EventPayload
 }
 
-export type EventPayload = {keyup: symbol} | {keydown: symbol}
+export type EventPayload = {keyup: symbol} | {keydown: symbol} | {setOwnPosition: Vector}
 
 export const MOVE_NORTH = Symbol()
 export const MOVE_EAST = Symbol()
