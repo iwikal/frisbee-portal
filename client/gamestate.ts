@@ -36,7 +36,7 @@ export class GameEntity {
         canvasContext.fillStyle = previousFillStyle
         break;
       case "Source":
-        canvasContext.drawImage(this.sprite[1], 0, 0, this.size.x, this.size.y)
+        canvasContext.drawImage(this.sprite[1], -this.size.x / 2, -this.size.y / 2, this.size.x, this.size.y)
         break;
       default:
         console.log("This should be impossible")
