@@ -3,4 +3,4 @@ dist
 .yarnrc
 .yarn/releases
 .parcel-cache
-dist
+build
