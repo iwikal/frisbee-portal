@@ -49,10 +49,8 @@ let myToken: string | undefined
 socket.on("newUser", data => {
   // When someone joins when there are people already connected
   myToken = data.token
-  if (currentState === undefined) {
-    currentState = new GameState(canvas)
-    drawLoop(0, 0)()
-  }
+  if (currentState) return
+  currentState = new GameState(canvas)
 
   const players = JSON.parse(data.players) as [string, Player][]
 
@@ -72,6 +70,8 @@ socket.on("newUser", data => {
     currentState.world.children.push(player)
     currentState.players.set(token, player)
   }
+
+  drawLoop(0, 0)()
 });
 
 socket.on('connectedUserBroadcast', data => {
@@ -156,7 +156,11 @@ class GameState extends GameEntity {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
+    const prevTrans = ctx.getTransform()
+    const { x, y } = currentPlayer.transform.position
+    ctx.translate(-x, -y)
     this.world.draw(ctx)
+    ctx.setTransform(prevTrans)
   }
 
   update(dt: number, commands: Command[]) {
@@ -170,7 +174,8 @@ let currentState: GameState // = new GameState(canvas)
 function clearCanvas() {
   const previousFillStyle = context.fillStyle
   context.fillStyle = "#fff"
-  context.fillRect(0, 0, canvas.width, canvas.height)
+  const { width, height } = canvas
+  context.fillRect(-width / 2, -height / 2, width, height)
   context.fillStyle = previousFillStyle
 }
 
@@ -179,9 +184,7 @@ function resizeCanvas() {
   canvas.height = window.innerHeight
   const { width, height } = context.canvas
   context.setTransform(new DOMMatrix().translate(width / 2, height / 2))
-  if (currentState !== undefined) {
-    currentState.draw(context)
-  }
+  currentState?.draw(context)
 }
 
 function drawLoop(lastFrameTime: number, acc: number) {
