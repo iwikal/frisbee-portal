@@ -238,12 +238,4 @@ window.addEventListener("keyup", (evt) => {
   }
 })
 
-window.addEventListener("click", (evt) => {
-  commands.push({
-    time: Date.now(),
-    source: myToken,
-    payload: {throwFrisbeeAt: new Vector(evt.x, evt.y)}
-  })
-})
-
 resizeCanvas()
