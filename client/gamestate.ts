@@ -4,6 +4,7 @@ import { Vector, Transform } from "../shared/vector"
 export type FillStyle = string | CanvasGradient | CanvasPattern
 
 export class GameEntity {
+  parent: GameEntity ;
   children: GameEntity[] = []
   velocity: Vector = new Vector(0, 0)
 
@@ -12,17 +13,26 @@ export class GameEntity {
       transform: Transform,
       sprite:
           {style: (ctx: CanvasRenderingContext2D) => FillStyle, path?: Path2D}
-        | {source: CanvasImageSource}
+        | {source: CanvasImageSource},
+      parent: GameEntity | null
   ) {
     this.sprite = sprite
     this.transform = transform
     this.size = size
+    if (parent === null) {
+      this.parent = this
+    } else {
+      this.parent = parent
+    }
   }
 
   update(deltaTime: number, commands: Command[]): boolean {
-    this.children = this.children.filter((child) => {
-      return child.update(deltaTime, commands)
-    })
+    let childrenRemoved = 0
+    for (const [index, child] of this.children.entries()) {
+      if ( ! child.update(deltaTime, commands) ) {
+        console.log(this.children.splice(index - childrenRemoved, 1)[0] === child)
+      }
+    }
 
     this.transform.position.x += this.velocity.x * deltaTime
     this.transform.position.y += this.velocity.y * deltaTime

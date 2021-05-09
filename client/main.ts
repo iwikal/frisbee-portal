@@ -62,7 +62,8 @@ socket.on("newUser", data => {
         rotation: 0
       },
       playerData.color,
-      token
+      token,
+      currentState.world
     )
     if (token === myToken) {
       currentPlayer = player
@@ -84,7 +85,8 @@ socket.on('connectedUserBroadcast', data => {
         rotation: 0
       },
       data.player.color,
-      data.token
+      data.token,
+      currentState.world
     )
     currentState.world.children.push(player)
     currentState.players.set(data.token, player)
@@ -127,14 +129,15 @@ class GameState extends GameEntity {
     super(
       new Vector(canvas.width, canvas.height),
       {position: new Vector(100, 100), rotation: 0},
-      {style: ()=>"#fff"}
+      {style: ()=>"#fff"},
+      undefined
     )
     this.transform = {
       position: new Vector(100, 100),
       rotation: 0,
     }
 
-    this.world = new World(new Vector(canvas.width, canvas.height));
+    this.world = new World(new Vector(canvas.width, canvas.height), this);
 
     const roomWidth = 800
     const roomHeight = 600
@@ -148,11 +151,10 @@ class GameState extends GameEntity {
     ]) {
       this.world.children.push(new Wall(
         size,
-        { position, rotation: 0 }
+        { position, rotation: 0 },
+        this.world
       ))
     }
-
-    this.world.children.push(new Frisbee(30, new Vector()))
   }
 
   draw(ctx: CanvasRenderingContext2D) {
@@ -234,6 +236,14 @@ window.addEventListener("keyup", (evt) => {
       })
     }
   }
+})
+
+window.addEventListener("click", (evt) => {
+  commands.push({
+    time: Date.now(),
+    source: myToken,
+    payload: {throwFrisbeeAt: new Vector(evt.x, evt.y)}
+  })
 })
 
 resizeCanvas()

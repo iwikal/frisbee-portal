@@ -7,7 +7,7 @@ import { PlayerEntity } from "./PlayerEntity";
 export class Frisbee extends GameEntity implements Collider {
   collider: Collider
 
-  constructor(size: number, position: Vector) {
+  constructor(size: number, position: Vector, parent: GameEntity) {
     function fillStyle(ctx: CanvasRenderingContext2D) : FillStyle {
       let gradient: FillStyle = ctx.createRadialGradient(
         -size / 2, -size / 2, 0,
@@ -22,7 +22,8 @@ export class Frisbee extends GameEntity implements Collider {
     super(
       new Vector(size, size),
       {rotation: 0, position: position},
-      {style: fillStyle, path: path}
+      {style: fillStyle, path: path},
+      parent
     )
     this.collider = new ColliderCircle(size / 2)
   }

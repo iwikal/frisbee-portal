@@ -58,4 +58,6 @@ io.on("connection", (socket: any) => {
   })
 });
 
-httpServer.listen(3000);
+const port: number = (+process.argv[2]) ?? 3000
+
+httpServer.listen(port);
