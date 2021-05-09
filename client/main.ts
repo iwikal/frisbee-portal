@@ -16,19 +16,20 @@ socket.on("connect", () => {
   socket.send("Hi, can I play?");
 });
 
-let localPlayer: Player
-let myToken: string
+let currentPlayer: PlayerEntity | undefined
+let myToken: string | undefined
 
 socket.on("newUser", data => {
   // When someone joins when there are people already connected
-  localPlayer = data.player
   myToken = data.token
   if (currentState === undefined) {
     currentState = new GameState(canvas)
     drawLoop(0, 0)()
   }
-  currentState.players = new Map(JSON.parse(data.players))
-  for (const [token, playerData] of currentState.players) {
+
+  const players = JSON.parse(data.players) as [string, Player][]
+
+  for (const [token, playerData] of players) {
     const player = new PlayerEntity(
       50,
       {
@@ -38,7 +39,11 @@ socket.on("newUser", data => {
       "red",
       token
     )
+    if (token === myToken) {
+      currentPlayer = player
+    }
     currentState.world.children.push(player)
+    currentState.players.set(token, player)
   }
 });
 
@@ -55,7 +60,7 @@ socket.on('connectedUserBroadcast', data => {
       data.token
     )
     currentState.world.children.push(player)
-    currentState.players.set(data.token, data.player)
+    currentState.players.set(data.token, player)
   }
 });
 
@@ -85,7 +90,7 @@ const startTime: number = Date.now()
 
 class GameState extends GameEntity {
   world: World
-  players = new Map();
+  players = new Map<string, PlayerEntity>();
   transform: Transform;
   phi = 0
   angVel = 0.005
@@ -160,25 +165,15 @@ function drawLoop(lastFrameTime: number, acc: number) {
     acc += currentTime - lastFrameTime
 
     while (acc >= tickTime) {
-      if (localPlayer !== undefined) {
-
-        if (localPlayer.lastX !== localPlayer.x || localPlayer.lastY !== localPlayer.y) {
-          localPlayer.lastX = localPlayer.x
-          localPlayer.lastY = localPlayer.y
-          localPlayer.moved = true
-        }
-      }
-      
       currentState.update(tickTime, commands)
       acc -= tickTime
 
       commands = []
     }
 
-
-    if (localPlayer !== undefined && localPlayer.moved) {
-      socket.emit('playerMoved', {newX: localPlayer.x, newY: localPlayer.y})
-      localPlayer.moved = false
+    if (currentPlayer?.moved) {
+      const { x, y } = currentPlayer.transform.position
+      socket.emit('playerMoved', { newX: x, newY: y })
     }
 
     clearCanvas()

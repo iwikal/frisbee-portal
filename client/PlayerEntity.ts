@@ -6,6 +6,7 @@ export class PlayerEntity extends GameEntity {
   token: string
 
   velocity: Vector
+  moved: boolean
 
   constructor(size: number, transform: Transform, color: string, token: string) {
     const path = new Path2D()
@@ -13,9 +14,12 @@ export class PlayerEntity extends GameEntity {
     super(new Vector(size, size), transform, {style: () => color, path: path})
     this.token = token
     this.velocity = new Vector(0, 0)
+    this.moved = false
   }
 
   update(dt: number, cmds: Command[]) {
+    const { x: lastX, y: lastY } = this.transform.position
+
     super.update(dt, cmds)
     for (const cmd of cmds) {
       // TODO: Check time
@@ -53,6 +57,11 @@ export class PlayerEntity extends GameEntity {
           return false
         }
       }
+    }
+
+    const { x, y } = this.transform.position
+    if (x !== lastX && y !== lastY) {
+      this.moved = true
     }
 
     return true
