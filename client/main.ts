@@ -177,6 +177,7 @@ function drawLoop(lastFrameTime: number, acc: number) {
     if (currentPlayer?.moved) {
       const { x, y } = currentPlayer.transform.position
       socket.emit('playerMoved', { newX: x, newY: y })
+      currentPlayer.moved = false
     }
 
     clearCanvas()
