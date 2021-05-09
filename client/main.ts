@@ -117,8 +117,6 @@ class GameState extends GameEntity {
   world: World
   players = new Map<string, PlayerEntity>();
   transform: Transform;
-  phi = 0
-  angVel = 0.005
 
   constructor(canvas: HTMLCanvasElement) {
     super(
@@ -133,35 +131,34 @@ class GameState extends GameEntity {
 
     this.world = new World(new Vector(canvas.width, canvas.height));
 
-    const wallSize = new Vector(50, 50)
+    const roomWidth = 800
+    const roomHeight = 600
+    const wallThickness = 50
 
-    for (const i of [0, 1]) {
-      const wall = new Wall(
-        wallSize,
-        {
-          position: new Vector(100 + 200 * i, 100),
-          rotation: 0
-        }
-      )
-      this.world.children.push(wall)
+    for (const [size, position] of [
+      [new Vector(wallThickness, roomHeight - wallThickness), new Vector(-roomWidth / 2, 0)],
+      [new Vector(wallThickness, roomHeight - wallThickness), new Vector(roomWidth / 2, 0)],
+      [new Vector(roomWidth + wallThickness, wallThickness), new Vector(0, -roomHeight / 2)],
+      [new Vector(roomWidth + wallThickness, wallThickness), new Vector(0, roomHeight / 2)],
+    ]) {
+      this.world.children.push(new Wall(
+        size,
+        { position, rotation: 0 }
+      ))
     }
 
-    this.world.children.push(new Frisbee(30, new Vector({x: 500, y: 500})))
+    this.world.children.push(new Frisbee(30, new Vector()))
   }
 
   draw(ctx: CanvasRenderingContext2D) {
+    const prevTransform = ctx.getTransform()
+    const { width, height } = ctx.canvas
+    ctx.translate(width / 2, height / 2)
     this.world.draw(ctx)
-    ctx.fillStyle = "#f0f"
-    const radius = 50
-    const xPos = 100
-    const yPos = 100
-    const xOffset = Math.cos(this.phi) * radius
-    const yOffset = Math.sin(this.phi) * radius
-    ctx.fillRect(xPos + xOffset, yPos + yOffset, 100, 100)
+    ctx.setTransform(prevTransform)
   }
 
   update(dt: number, commands: Command[]) {
-    this.phi = this.phi + this.angVel * dt
     this.world.update(dt, commands)
     return true
   }
