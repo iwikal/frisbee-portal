@@ -1,8 +1,10 @@
-const httpServer = require("http").createServer();
-const { v4: uuidv4 } = require('uuid');
-import { Player } from './shared/player';
+import { createServer } from 'http'
+import { v4 as uuidv4 } from 'uuid'
+import { Player } from './shared/player'
 
-let players = new Map()
+const players = new Map<string, Player>()
+
+const httpServer = createServer()
 
 const io = require("socket.io")(httpServer, {
   cors: {
@@ -12,19 +14,20 @@ const io = require("socket.io")(httpServer, {
 });
 
 io.on("connection", (socket: any) => {
-  
-  let token: String = uuidv4();
-  let player: Player = new Player(10, 10)
+  const token: string = uuidv4();
+  console.log(`${token} connected`)
+
+  const player: Player = new Player(10, 10)
   players.set(token, player)
   
   // Send data to newly connected client
-  socket.emit('newUser', {token: token, player: player, players: JSON.stringify([...players])});
+  socket.emit('newUser', {token, player, players: JSON.stringify([...players])});
 
   // Broadcast that someone new has connected
-  socket.broadcast.emit('connectedUserBroadcast', {token: token, player: player})
+  socket.broadcast.emit('connectedUserBroadcast', {token, player})
 
   socket.on('disconnect', function() {
-    console.log("Someone disconnected")
+    console.log(`${token} disconnected`)
 
     // Remove player from players list
     players.delete(token)
@@ -34,6 +37,8 @@ io.on("connection", (socket: any) => {
   });
 
   socket.on('playerMoved', (data: any) => {
+    player.x = data.newX
+    player.y = data.newY
     // Broadcast to everyone the new location of the player
     socket.broadcast.emit('playerMoved', {token: token, x: data.newX, y: data.newY})
   })
