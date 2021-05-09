@@ -58,6 +58,7 @@ io.on("connection", (socket: any) => {
   })
 });
 
-const port: number = (+process.argv[2]) ?? 3000
+let port: number = (+process.argv[2]) ?? NaN
+if (isNaN(port)) { port = 3000 }
 
 httpServer.listen(port);
