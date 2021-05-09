@@ -79,29 +79,11 @@ export class PlayerEntity extends GameEntity {
                 console.log("Nothing to throw!")
               } else {
                 const index = this.children.indexOf(this.heldItem)
-                console.log("Yeet!")
                 this.heldItem.transform.position = this.heldItem.transform.position.plus(this.transform.position)
                 this.heldItem.parent = this.parent
                 this.heldItem.velocity = this.velocity.scaled(3)
                 this.heldItem = null
               }
-              console.log(`Maybe about to throw a frisbee: Has ${this.children.length} child(ren)`)
-
-              const maybeFrisbee = this.children.pop()
-              console.log(`Popped a child: ${maybeFrisbee}`)
-              if (maybeFrisbee instanceof Frisbee) {
-                this.parent.children.push(maybeFrisbee)
-                
-                
-                console.log(this.parent)
-              } else if (maybeFrisbee !== undefined) {
-                this.children.push(maybeFrisbee)
-                console.log("No yeet, pushing it again")
-              } else {
-                console.log("Oh, it was undefined, nevermind")
-              }
-              console.log(`${this.children.length} child(ren) remaining`)
-              console.log(this.children)
               break
             default:
               this.moveKeysPressed[this.moveKey(cmd.payload.keydown)] = true
