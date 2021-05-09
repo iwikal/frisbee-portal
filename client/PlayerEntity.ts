@@ -60,7 +60,7 @@ export class PlayerEntity extends GameEntity {
     }
 
     const { x, y } = this.transform.position
-    if (x !== lastX && y !== lastY) {
+    if (x !== lastX || y !== lastY) {
       this.moved = true
     }
 

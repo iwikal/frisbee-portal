@@ -41,7 +41,7 @@ socket.on("newUser", data => {
         position: new Vector(playerData.x, playerData.y),
         rotation: 0
       },
-      "red",
+      playerData.color,
       token
     )
     if (token === myToken) {
@@ -61,7 +61,7 @@ socket.on('connectedUserBroadcast', data => {
         position: new Vector(data.player.x, data.player.y),
         rotation: 0
       },
-      "red",
+      data.player.color,
       data.token
     )
     currentState.world.children.push(player)
@@ -71,9 +71,12 @@ socket.on('connectedUserBroadcast', data => {
 
 socket.on('disconnectedUserBroadcast', data => {
   // Remove a user when they disconnect
-  if (currentState !== undefined) {
-    currentState.players.delete(data.token)
-  }
+  commands.push({
+    time: 0, // FIXME
+    source: data.token,
+    payload: {disconnect: {}},
+  })
+  currentState?.players.delete(data.token)
 });
 
 socket.on('playerMoved', data => {
@@ -179,6 +182,7 @@ function drawLoop(lastFrameTime: number, acc: number) {
     if (currentPlayer?.moved) {
       const { x, y } = currentPlayer.transform.position
       socket.emit('playerMoved', { newX: x, newY: y })
+      currentPlayer.moved = false
     }
 
     clearCanvas()
