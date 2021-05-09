@@ -13,7 +13,7 @@ export class PlayerEntity extends GameEntity {
 
   constructor(size: number, transform: Transform, color: string, token: string) {
     const path = new Path2D()
-    path.arc(0, 0, size / 2, 0, 2 * Math.PI)
+    path.arc(-size / 2, -size / 2, size / 2, 0, 2 * Math.PI)
     super(new Vector(size, size), transform, {style: () => color, path: path})
     this.token = token
     this.moveKeysPressed = {
