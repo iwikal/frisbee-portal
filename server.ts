@@ -37,6 +37,11 @@ io.on("connection", (socket: any) => {
     // Broadcast to everyone the new location of the player
     socket.broadcast.emit('playerMoved', {token: token, x: data.newX, y: data.newY})
   })
+
+  socket.on('event', (data: any) => {
+    console.log(`event ${data}`)
+    socket.broadcast.emit('event', data)
+  })
 });
 
 httpServer.listen(3000);

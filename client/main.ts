@@ -192,11 +192,14 @@ window.addEventListener("keydown", (evt) => {
   if ( ! evt.repeat ) {
     for (const [symbolicKey, keycode] of keyBindings.entries()) {
       if (keycode === evt.code) {
-        commands.push({
+        const cmd = {
           time: Date.now(),
           source: myToken,
-          payload: {keydown: symbolicKey}
-        })
+          payload: {keydown: symbolicKey.toString()}
+        }
+        commands.push(cmd)
+        console.log(JSON.stringify(cmd.payload))
+        socket.emit('event', JSON.stringify(cmd))
       }
     }
   }
@@ -205,13 +208,20 @@ window.addEventListener("keydown", (evt) => {
 window.addEventListener("keyup", (evt) => {
   for (const [symbolicKey, keycode] of keyBindings.entries()) {
     if (keycode === evt.code) {
-      commands.push({
+      const cmd = {
         time: Date.now(),
         source: myToken,
         payload: {keyup: symbolicKey}
-      })
+      }
+      commands.push(cmd)
+      socket.emit('event', JSON.stringify(cmd))
     }
   }
+})
+
+socket.on('event', (data: string) => {
+  console.log(`Server sent event ${data}`)
+  commands.push(JSON.parse(data) as Command)
 })
 
 resizeCanvas()

@@ -7,17 +7,17 @@ export interface Command {
 }
 
 export type EventPayload =
-  | {keyup: symbol}
-  | {keydown: symbol}
+  | {keyup: string}
+  | {keydown: string}
   | {setOwnPosition: Vector}
   | {disconnect: {}}
 
-export const MOVE_NORTH = Symbol("north")
-export const MOVE_EAST = Symbol("east")
-export const MOVE_SOUTH = Symbol("south")
-export const MOVE_WEST = Symbol("west")
+export const MOVE_NORTH = "north"
+export const MOVE_EAST = "east"
+export const MOVE_SOUTH = "south"
+export const MOVE_WEST = "west"
 
-export let keyBindings: Map<symbol, string> = new Map([
+export let keyBindings: Map<string, string> = new Map([
   [MOVE_NORTH, "KeyW"],
   [MOVE_SOUTH, "KeyS"],
   [MOVE_EAST, "KeyD"],
