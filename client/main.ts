@@ -10,7 +10,12 @@ import { Frisbee } from "./Frisbee";
 const canvas: HTMLCanvasElement = document.getElementById("canvas") as HTMLCanvasElement
 const context: CanvasRenderingContext2D = canvas.getContext("2d")
 
-const socket = io("http://localhost:3000");
+const searchParams: URLSearchParams = new URL(window.location.href).searchParams
+
+const serverHostname: string = searchParams["server"] || "localhost"
+const serverPort: number = (+searchParams["serverPort"]) || 3000
+
+const socket = io(`http://${serverHostname}:${serverPort}`);
 
 socket.on("connect", () => {
   socket.send("Hi, can I play?");
