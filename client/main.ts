@@ -151,11 +151,7 @@ class GameState extends GameEntity {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    const prevTransform = ctx.getTransform()
-    const { width, height } = ctx.canvas
-    ctx.translate(width / 2, height / 2)
     this.world.draw(ctx)
-    ctx.setTransform(prevTransform)
   }
 
   update(dt: number, commands: Command[]) {
@@ -176,6 +172,8 @@ function clearCanvas() {
 function resizeCanvas() {
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
+  const { width, height } = context.canvas
+  context.setTransform(new DOMMatrix().translate(width / 2, height / 2))
   if (currentState !== undefined) {
     currentState.draw(context)
   }
