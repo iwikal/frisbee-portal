@@ -2,6 +2,7 @@ import { createServer } from 'http'
 import { v4 as uuidv4 } from 'uuid'
 import { Player } from './shared/player'
 
+const colors: string[] = ['red', 'blue', 'green', 'magenta', 'yellow', 'cyan']
 const players = new Map<string, Player>()
 
 const httpServer = createServer()
@@ -17,7 +18,10 @@ io.on("connection", (socket: any) => {
   const token: string = uuidv4();
   console.log(`${token} connected`)
 
-  const player: Player = new Player(10, 10)
+  const color = colors.pop()
+  const player: Player = new Player(10, 10, color)
+  console.log(`Player ${token} was assigned color ${color}`)
+
   players.set(token, player)
   
   // Send data to newly connected client
@@ -28,6 +32,16 @@ io.on("connection", (socket: any) => {
 
   socket.on('disconnect', function() {
     console.log(`${token} disconnected`)
+
+    // Re-add color to the pool
+    const p = players.get(token)
+    if (p !== undefined) {
+      colors.push(p.color)
+      console.log(`Color ${p.color} returned to color pool`)
+    } else {
+      console.log("No color was returned to the pool")
+      console.log(players)
+    }
 
     // Remove player from players list
     players.delete(token)

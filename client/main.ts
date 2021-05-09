@@ -36,7 +36,7 @@ socket.on("newUser", data => {
         position: new Vector(playerData.x, playerData.y),
         rotation: 0
       },
-      "red",
+      playerData.color,
       token
     )
     if (token === myToken) {
@@ -56,7 +56,7 @@ socket.on('connectedUserBroadcast', data => {
         position: new Vector(data.player.x, data.player.y),
         rotation: 0
       },
-      "red",
+      data.player.color,
       data.token
     )
     currentState.world.children.push(player)
