@@ -156,11 +156,11 @@ class GameState extends GameEntity {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    const prevTrans = ctx.getTransform()
+    const { width, height } = ctx.canvas
     const { x, y } = currentPlayer.transform.position
-    ctx.translate(-x, -y)
+    ctx.setTransform(new DOMMatrix().translate(width / 2 - x, height / 2 - y))
     this.world.draw(ctx)
-    ctx.setTransform(prevTrans)
+    ctx.setTransform(new DOMMatrix())
   }
 
   update(dt: number, commands: Command[]) {
@@ -175,15 +175,13 @@ function clearCanvas() {
   const previousFillStyle = context.fillStyle
   context.fillStyle = "#fff"
   const { width, height } = canvas
-  context.fillRect(-width / 2, -height / 2, width, height)
+  context.fillRect(0, 0, width, height)
   context.fillStyle = previousFillStyle
 }
 
 function resizeCanvas() {
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
-  const { width, height } = context.canvas
-  context.setTransform(new DOMMatrix().translate(width / 2, height / 2))
   currentState?.draw(context)
 }
 
