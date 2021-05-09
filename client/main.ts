@@ -16,6 +16,28 @@ socket.on("connect", () => {
   socket.send("Hi, can I play?");
 });
 
+function assertNever(x: never): never {
+  throw new Error(`supposedly unreachable code executed: ${x}`)
+}
+
+socket.on("disconnect", (reason) => {
+  switch (reason) {
+    case 'ping timeout':
+      alert('connection timed out')
+      break
+    case 'transport close':
+      alert('connection closed')
+      break
+    case 'transport error':
+    case 'io server disconnect':
+    case 'io client disconnect':
+      alert('connection broke')
+      break
+    default:
+      assertNever(reason)
+  }
+})
+
 let currentPlayer: PlayerEntity | undefined
 let myToken: string | undefined
 
