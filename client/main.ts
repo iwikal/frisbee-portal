@@ -66,9 +66,12 @@ socket.on('connectedUserBroadcast', data => {
 
 socket.on('disconnectedUserBroadcast', data => {
   // Remove a user when they disconnect
-  if (currentState !== undefined) {
-    currentState.players.delete(data.token)
-  }
+  commands.push({
+    time: 0, // FIXME
+    source: data.token,
+    payload: {disconnect: {}},
+  })
+  currentState?.players.delete(data.token)
 });
 
 socket.on('playerMoved', data => {
