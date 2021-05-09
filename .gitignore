@@ -1,6 +1,6 @@
 node_modules
 dist
 .yarnrc
-.yarn/releases
+.yarn
 .parcel-cache
 build
