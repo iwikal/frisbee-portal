@@ -5,6 +5,7 @@ import { io } from "socket.io-client";
 import { World, Wall } from "./world"
 import { Player } from "../shared/player"
 import { PlayerEntity } from "./PlayerEntity"
+import { Frisbee } from "./Frisbee";
 
 const canvas: HTMLCanvasElement = document.getElementById("canvas") as HTMLCanvasElement
 const context: CanvasRenderingContext2D = canvas.getContext("2d")
@@ -114,6 +115,8 @@ class GameState extends GameEntity {
       )
       this.world.children.push(wall)
     }
+
+    this.world.children.push(new Frisbee(30, new Vector({x: 500, y: 500})))
   }
 
   draw(ctx: CanvasRenderingContext2D) {
